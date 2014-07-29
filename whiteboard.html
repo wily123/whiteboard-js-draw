@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<head>
+<meta charset='utf-8' />
+<title>HTML5 Whiteboard</title>
+<meta name='viewport' content='initial-scale=1.0'>
+<style>
+* {
+	margin: 0;	padding: 0;
+}
+
+body, html {
+	height: 100%;
+}
+
+#myCanvas {
+	cursor: crosshair;
+    position: fixed;
+	cursor: url("img/cursor.gif"), auto;
+}
+</style>
+
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+
+
+<style>
+#cont{
+position:fixed;
+top:2px;
+
+width:40px;
+height:40px;
+background:;
+z-index:99999;
+border:0px solid #c0c0c0;
+color:white;
+
+}
+
+
+
+
+#cont2{
+padding:4px;
+color:white;
+height:auto;
+border:1px solid #c0c0c0;
+display:none;
+position:fixed;
+top:10px;
+background:#888;
+z-index:99999;
+}
+
+.but{
+display:inline-block;
+width:20px;
+height:20px;
+border:1px solid black;
+border-radius:20px;
+}
+
+.madh{
+display:inline-block;
+width:20px;
+height:20px;
+border: 1px solid black;
+}
+
+.madhesia{
+background:black;
+display: table;
+margin: auto;
+}
+
+
+</style>
+
+
+
+
+
+
+</head>
+<body>
+	<canvas id='myCanvas'>
+		Sorry, your browser does not support HTML5 canvas technology.
+	</canvas>
+	
+	
+<div id="cont" class="draggable" ><img src="img/paint.png" onclick="hosem('cont2')" style="max-width:100%;"></div>
+
+<div id="cont2" class="draggable">
+
+Color:
+<div class="but color" style="background:#fff;" onclick="changeColor('#fff')"></div>
+<div class="but color" style="background:#900;" onclick="changeColor('#900')"></div>
+<div class="but color" style="background:#909;" onclick="changeColor('#909')"></div>
+<div class="but color" style="background:#990;" onclick="changeColor('#990')"></div>
+<div class="but color" style="background:#25FA00;" onclick="changeColor('#25FA00')"></div>
+<div class="but color" style="background:#00A8EB" onclick="changeColor('#00A8EB')"></div>
+<div class="but color" style="background:#FFFB1C" onclick="changeColor('#FFFB1C')"></div>
+<div class="but color" style="background:#FF0000" onclick="changeColor('#FF0000')"></div>
+<div class="but color" style="background:#00F0F0" onclick="changeColor('#00F0F0')"></div>
+<div class="but color" style="background:#FF8800" onclick="changeColor('#FF8800')"></div>
+<div class="but color" style="background:#8A5E3E" onclick="changeColor('#8A5E3E')"></div>
+
+<div style="display:inline-block;">Size
+<img src="img/1.png" onclick="changeSize(0.2)">
+<img src="img/2.png" onclick="changeSize(3)">
+<img src="img/3.png" onclick="changeSize(5)">
+<img src="img/4.png" onclick="changeSize(10)">
+<img src="img/5.png" onclick="changeSize(20)">
+<img src="img/6.png" onclick="changeSize(50)">
+<img src="img/6.png" onclick="changeSize(100)">
+
+<img src="img/7.png" onclick="zero()">
+
+<img src="img/eraser.png" onclick="changeColor(bgcolor);"> 
+<span  onclick="hosem('cont2')" >HIDE</span>
+</div></div>
+</body>
+</html>
+
+
+<script type='text/javascript'>
+
+var bgcolor= "#222";
+var colorP= "#efefef";
+var sizeP= "0.2";
+
+
+//window.onload = 
+
+function ola() {
+
+var myCanvas = document.getElementById('myCanvas');
+
+
+	var ctx = myCanvas.getContext('2d');    
+    // Fill Window Width and Height
+    myCanvas.width = window.innerWidth;
+	myCanvas.height = window.innerHeight;
+	// Set Background Color
+    ctx.fillStyle= bgcolor;
+	ctx.fillRect(0,0,myCanvas.width,myCanvas.height);
+
+
+
+	
+    // Mouse Event Handlers
+	if(myCanvas){
+		var isDown = false;
+		var canvasX, canvasY;
+		ctx.lineWidth = sizeP;
+		
+	$(myCanvas)
+		.mousedown(function(e){
+			isDown = true;
+			ctx.beginPath();
+			canvasX = e.pageX - myCanvas.offsetLeft;
+			canvasY = e.pageY - myCanvas.offsetTop;
+			ctx.moveTo(canvasX, canvasY);
+		})
+		
+		.mousemove(function(e){
+			if(isDown !== false) {
+				canvasX = e.pageX - myCanvas.offsetLeft;
+				canvasY = e.pageY - myCanvas.offsetTop;
+				ctx.lineTo(canvasX, canvasY);
+				ctx.strokeStyle = colorP;
+				ctx.lineWidth = sizeP;
+				ctx.stroke();
+			}
+		})
+		
+		.mouseup(function(e){
+			isDown = false;
+			ctx.closePath();
+		});
+	}
+	
+	// Touch Events Handlers
+	draw = {
+		started: false,
+		
+		start: function(evt) {
+			ctx.beginPath();
+			ctx.moveTo(
+				evt.touches[0].pageX,
+				evt.touches[0].pageY
+			);
+			
+			this.started = true;
+
+		},
+		
+		move: function(evt) {
+			
+			if (this.started) {
+				ctx.lineTo(
+					evt.touches[0].pageX,
+					evt.touches[0].pageY
+				);
+				
+				ctx.strokeStyle = '#000';
+				ctx.lineWidth = sizeP;
+				ctx.stroke();
+			}
+			
+			},
+		end: function(evt) {
+			this.started = false;
+		}
+	};
+	
+	// Touch Events
+	myCanvas.addEventListener('touchstart', draw.start, false);
+	myCanvas.addEventListener('touchend', draw.end, false);
+	myCanvas.addEventListener('touchmove', draw.move, false);
+	
+	// Disable Page Move
+	document.body.addEventListener('touchmove',function(evt){
+		evt.preventDefault();
+	},false);
+};
+
+
+
+
+
+function changeColor(color){
+colorP=  color;
+hosem('cont2');
+}
+
+
+function changeSize(madhesia){ sizeP = madhesia;}
+
+
+function getStyle(elementId){
+return document.defaultView.getComputedStyle(document.getElementById(elementId), '').getPropertyValue("display");
+}
+
+
+function hosem(eleM){
+var ajo= getStyle(eleM);
+if (ajo == "none"){
+document.getElementById(eleM).style.display="block";
+document.getElementById('cont').style.display="none";
+}
+if (ajo == "block"){
+document.getElementById(eleM).style.display="none";
+document.getElementById('cont').style.display="block";
+}
+}
+
+function zero(){
+    ctx.fillStyle= bgcolor;
+    ctx.fillRect(0,0,myCanvas.width,myCanvas.height);
+	ola();
+}
+
+	
+ola();	
+	
+$(function() {
+$( ".draggable" ).draggable();
+});
+
+</script>
